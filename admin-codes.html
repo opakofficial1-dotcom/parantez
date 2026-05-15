@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PARANTÈZ — Admin / Codes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080808;
+      --surface: #111111;
+      --surface2: #161616;
+      --border: #222222;
+      --accent: #C8FF00;
+      --accent-dim: rgba(200,255,0,0.1);
+      --text: #EFEFEF;
+      --muted: #555;
+      --error: #FF4444;
+      --success: #C8FF00;
+      --used: #FF9900;
+      --font-d: 'Bebas Neue', sans-serif;
+      --font-m: 'Space Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-m);
+      min-height: 100vh;
+    }
+
+    /* ---- HEADER ---- */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+    .header-brand {
+      font-family: var(--font-d);
+      font-size: 1.4rem;
+      letter-spacing: 0.1em;
+    }
+    .header-brand span { color: var(--accent); }
+    .header-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* ---- LAYOUT ---- */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    /* ---- SECTION ---- */
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    /* ---- STATS ---- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      position: relative;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 30px; height: 2px;
+      background: var(--accent);
+    }
+    .stat-val {
+      font-family: var(--font-d);
+      font-size: 2.5rem;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .stat-lbl {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* ---- GENERATE ---- */
+    .generate-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+    }
+    .gen-row {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      flex: 1;
+      min-width: 160px;
+    }
+    .field label {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .field input, .field select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-m);
+      font-size: 0.85rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .field input:focus, .field select:focus {
+      border-color: var(--accent);
+    }
+    .field select option { background: var(--surface); }
+
+    .btn {
+      font-family: var(--font-d);
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn:hover:not(:disabled) { opacity: 0.85; }
+    .btn:active:not(:disabled) { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); color: #080808; }
+    .btn-danger  { background: transparent; color: var(--error); border: 1px solid var(--error); }
+    .btn-copy    { background: transparent; color: var(--muted); border: 1px solid var(--border); font-size: 0.7rem; padding: 0.3rem 0.6rem; letter-spacing: 0.1em; }
+    .btn-copy:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* Generated codes preview */
+    .generated-preview {
+      display: none;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+    }
+    .generated-preview.visible { display: block; }
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .preview-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .codes-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .code-badge {
+      background: var(--accent-dim);
+      border: 1px solid rgba(200,255,0,0.25);
+      color: var(--accent);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      padding: 0.3rem 0.7rem;
+    }
+
+    /* ---- TABLE ---- */
+    .table-wrapper {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    thead th {
+      text-align: left;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--muted);
+      text-transform: uppercase;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    tbody tr:hover { background: var(--surface2); }
+    td {
+      padding: 0.85rem 1rem;
+      vertical-align: middle;
+    }
+    .code-cell {
+      font-family: var(--font-m);
+      letter-spacing: 0.15em;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      padding: 0.2rem 0.5rem;
+      text-transform: uppercase;
+    }
+    .badge-active { background: var(--accent-dim); color: var(--accent); }
+    .badge-used   { background: rgba(255,153,0,0.1); color: var(--used); }
+    .badge-inactive { background: rgba(255,68,68,0.1); color: var(--error); }
+
+    .date-cell { color: var(--muted); font-size: 0.7rem; }
+    .label-cell { color: var(--muted); font-style: italic; font-size: 0.75rem; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+    }
+    .empty-state-icon { font-size: 2rem; margin-bottom: 1rem; opacity: 0.4; }
+    .empty-state-text { font-size: 0.75rem; letter-spacing: 0.1em; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 0.9rem 1.25rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.25s, transform 0.25s;
+      z-index: 100;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      header { padding: 1rem; }
+      .container { padding: 1.5rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="header-brand">PARAN<span>È</span>Z <span style="color:var(--muted);font-size:1rem">·</span> ADMIN</div>
+    <div class="header-tag">Gestion des codes d'invitation</div>
+  </div>
+  <a href="/" style="color:var(--muted);font-size:0.7rem;letter-spacing:0.2em;text-decoration:none;text-transform:uppercase;">← Retour au site</a>
+</header>
+
+<div class="container">
+
+  <!-- STATS -->
+  <div>
+    <div class="section-label">Vue d'ensemble</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val" id="statTotal">—</div>
+        <div class="stat-lbl">Codes créés</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statActive" style="color:var(--accent)">—</div>
+        <div class="stat-lbl">Codes actifs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statUsed" style="color:var(--used)">—</div>
+        <div class="stat-lbl">Codes utilisés</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERATE -->
+  <div>
+    <div class="section-label">Générer des codes</div>
+    <div class="generate-box">
+      <div class="gen-row">
+        <div class="field">
+          <label>Nombre de codes</label>
+          <input type="number" id="genQty" min="1" max="50" value="1" />
+        </div>
+        <div class="field">
+          <label>Note / Label (optionnel)</label>
+          <input type="text" id="genLabel" placeholder="ex: Instagram, Famille…" maxlength="40" />
+        </div>
+        <div class="field" style="flex:0; justify-content: flex-end; padding-top: 1.4rem;">
+          <button class="btn btn-primary" onclick="generateCodes()">GÉNÉRER</button>
+        </div>
+      </div>
+
+      <div class="generated-preview" id="genPreview">
+        <div class="preview-header">
+          <div class="preview-title" id="previewTitle">Codes générés</div>
+          <button class="btn btn-copy" onclick="copyAllCodes()">COPIER TOUT</button>
+        </div>
+        <div class="codes-list" id="previewCodes"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <div class="section-label" style="margin:0">Tous les codes</div>
+      <button class="btn btn-danger" style="font-size:0.75rem;padding:0.5rem 0.9rem;" onclick="deleteUsed()">SUPPRIMER LES UTILISÉS</button>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Statut</th>
+            <th>Label</th>
+            <th>Créé le</th>
+            <th>Utilisé le</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="codesTable">
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <div class="empty-state-icon">◈</div>
+                <div class="empty-state-text">Chargement…</div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<script>
+  // ==========================================
+  // ⚙️ CONFIGURATION — À modifier
+  // ==========================================
+  const SUPABASE_URL      = 'https://aceaaehdelrrkxbpfxzp.supabase.co';
+  const SUPABASE_ANON     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZWFhZWhkZWxycmt4YnBmeHpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MzEwMTQsImV4cCI6MjA5NDMwNzAxNH0.I95UrlcB6Yr_Nhg4jTf-R4bnNfmo4ClqZBE1vVITCfQ';
+  const SUPABASE_SERVICE  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZWFhZWhkZWxycmt4YnBmeHpwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODczMTAxNCwiZXhwIjoyMDk0MzA3MDE0fQ.aqUwuZ4mI4K4-fmx_FDbSe3CF6-wFJBbQf0NymowU94';
+  // ==========================================
+
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE);
+
+  let lastGeneratedCodes = [];
+
+  // ---- Génération de code ----
+  function randomCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const seg = () => Array.from({length:4}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
+    return `${seg()}-${seg()}`;
+  }
+
+  async function generateCodes() {
+    const qty   = Math.min(50, Math.max(1, parseInt(document.getElementById('genQty').value) || 1));
+    const label = document.getElementById('genLabel').value.trim() || null;
+
+    const codes = Array.from({length: qty}, () => ({
+      code: randomCode(),
+      label,
+      is_active: true
+    }));
+
+    const { error } = await db.from('invite_codes').insert(codes);
+
+    if (error) {
+      toast('Erreur lors de la génération : ' + error.message, true);
+      return;
+    }
+
+    lastGeneratedCodes = codes.map(c => c.code);
+
+    // Afficher la preview
+    const preview = document.getElementById('genPreview');
+    const list    = document.getElementById('previewCodes');
+    preview.classList.add('visible');
+    document.getElementById('previewTitle').textContent = `${qty} code${qty>1?'s':''} généré${qty>1?'s':''}`;
+    list.innerHTML = lastGeneratedCodes.map(c =>
+      `<span class="code-badge">${c}</span>`
+    ).join('');
+
+    toast(`${qty} code${qty>1?'s':''} créé${qty>1?'s':''}  ✦`);
+    loadCodes();
+  }
+
+  function copyAllCodes() {
+    if (!lastGeneratedCodes.length) return;
+    navigator.clipboard.writeText(lastGeneratedCodes.join('\n'));
+    toast('Codes copiés dans le presse-papier');
+  }
+
+  // ---- Charger & afficher les codes ----
+  async function loadCodes() {
+    const { data, error } = await db
+      .from('invite_codes')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) { toast('Erreur chargement', true); return; }
+
+    // Stats
+    const total  = data.length;
+    const active = data.filter(c => c.is_active && !c.used_at).length;
+    const used   = data.filter(c => c.used_at).length;
+
+    document.getElementById('statTotal').textContent  = total;
+    document.getElementById('statActive').textContent = active;
+    document.getElementById('statUsed').textContent   = used;
+
+    // Table
+    const tbody = document.getElementById('codesTable');
+
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">◈</div><div class="empty-state-text">Aucun code créé</div></div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.map(c => {
+      let badge = '';
+      if (c.used_at)      badge = `<span class="badge badge-used">Utilisé</span>`;
+      else if (c.is_active) badge = `<span class="badge badge-active">Actif</span>`;
+      else                  badge = `<span class="badge badge-inactive">Désactivé</span>`;
+
+      const createdAt = new Date(c.created_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      const usedAt    = c.used_at ? new Date(c.used_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+
+      return `
+        <tr>
+          <td>
+            <div class="code-cell">
+              ${c.code}
+              <button class="btn btn-copy" onclick="copyCode('${c.code}')">COPIER</button>
+            </div>
+          </td>
+          <td>${badge}</td>
+          <td class="label-cell">${c.label || '—'}</td>
+          <td class="date-cell">${createdAt}</td>
+          <td class="date-cell">${usedAt}</td>
+          <td>
+            <button class="btn btn-danger" style="font-size:0.65rem;padding:0.25rem 0.6rem;" onclick="deleteCode('${c.id}')">✕</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function copyCode(code) {
+    navigator.clipboard.writeText(code);
+    toast(`Code ${code} copié`);
+  }
+
+  async function deleteCode(id) {
+    const { error } = await db.from('invite_codes').delete().eq('id', id);
+    if (error) { toast('Erreur suppression', true); return; }
+    toast('Code supprimé');
+    loadCodes();
+  }
+
+  async function deleteUsed() {
+    if (!confirm('Supprimer tous les codes déjà utilisés ?')) return;
+    const { error } = await db.from('invite_codes').delete().not('used_at', 'is', null);
+    if (error) { toast('Erreur', true); return; }
+    toast('Codes utilisés supprimés');
+    loadCodes();
+  }
+
+  // ---- Toast ----
+  function toast(msg, isError = false) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.style.borderLeftColor = isError ? '#FF4444' : 'var(--accent)';
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2800);
+  }
+
+  // ---- Init ----
+  loadCodes();
+</script>
+
+</body>
+</html>
